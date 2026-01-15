@@ -28,4 +28,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-edu.aitu.oop3.db/DatabaseConnection.java
+
+src/edu/aitu/oop3/db/DatabaseConnection.java
