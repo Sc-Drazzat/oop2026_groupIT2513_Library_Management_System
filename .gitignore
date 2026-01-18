@@ -29,5 +29,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-src/edu/aitu/oop3/db/DatabaseConnection.java
 config.properties
