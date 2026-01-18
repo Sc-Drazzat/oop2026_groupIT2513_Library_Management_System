@@ -10,10 +10,10 @@ public class Book {
     public Book() {}
 
     public Book(int id, String title, String author, boolean available) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.available = available;
+        setId(id);
+        setTitle(title);
+        setAuthor(author);
+        setAvailable(available);
     }
 
     public int getId() {
