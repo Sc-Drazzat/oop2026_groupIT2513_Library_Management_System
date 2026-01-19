@@ -1,4 +1,4 @@
-package edu.aitu.oop3.exception;
+package edu.aitu.oop3.exceptions;
 
 public class MemberNotFoundException extends RuntimeException {
     public MemberNotFoundException(String message) {
