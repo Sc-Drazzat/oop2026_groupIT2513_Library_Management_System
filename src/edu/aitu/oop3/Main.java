@@ -1,26 +1,18 @@
 package edu.aitu.oop3;
-
-import edu.aitu.oop3.db.DatabaseConnection;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import edu.aitu.oop3.repositories.BookRepository;
+import edu.aitu.oop3.repositories.LoanRepository;
+import edu.aitu.oop3.repositories.MemberRepository;
+import edu.aitu.oop3.service.LoanService;
+import edu.aitu.oop3.service.FineCalculator;
+import edu.aitu.oop3.controller.LibraryController;
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Connecting to Supabase...");
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            System.out.println("Connected successfully!");
-            String sql = "SELECT CURRENT_TIMESTAMP";
-            try (PreparedStatement stmt = connection.prepareStatement(sql);
-                 ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    System.out.println("Database time: " + rs.getTimestamp(1));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error while connecting to database:");
-            e.printStackTrace();
-        }
+        BookRepository bookRepository = new BookRepository();
+        MemberRepository memberRepository = new MemberRepository();
+        LoanRepository loanRepository = new LoanRepository();
+        FineCalculator fineCalculator = new FineCalculator();
+        LoanService loanService = new LoanService(loanRepository, bookRepository, memberRepository, fineCalculator);
+        LibraryController libraryController = new LibraryController(bookRepository, memberRepository, loanRepository, loanService);
+        libraryController.run();
     }
 }
