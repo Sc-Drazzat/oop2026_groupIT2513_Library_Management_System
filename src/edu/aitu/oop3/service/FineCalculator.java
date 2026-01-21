@@ -21,5 +21,4 @@ public class FineCalculator {
         }
         return 0.0;
     }
-
 }
