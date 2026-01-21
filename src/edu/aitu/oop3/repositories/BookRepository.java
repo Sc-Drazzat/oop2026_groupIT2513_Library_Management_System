@@ -19,7 +19,7 @@ public class BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    return null;
+        return null;
     }
 
     public List<Book> listAvailableBooks() {
@@ -83,6 +83,3 @@ public class BookRepository {
         );
     }
 }
-
-
-
