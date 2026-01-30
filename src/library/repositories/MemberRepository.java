@@ -1,6 +1,6 @@
-package edu.aitu.oop3.repositories;
-import edu.aitu.oop3.entities.Member;
-import edu.aitu.oop3.db.DatabaseConnection;
+package library.repositories;
+import library.entities.Member;
+import library.db.DatabaseConnection;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.*;

@@ -1,4 +1,4 @@
-package edu.aitu.oop3.exceptions;
+package library.exceptions;
 
 public class BookAlreadyOnLoanException extends RuntimeException {
     public BookAlreadyOnLoanException(String message) {

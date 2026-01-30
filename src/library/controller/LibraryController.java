@@ -1,13 +1,13 @@
- package edu.aitu.oop3.controller;
-import edu.aitu.oop3.entities.Book;
-import edu.aitu.oop3.entities.Member;
-import edu.aitu.oop3.exceptions.BookAlreadyOnLoanException;
-import edu.aitu.oop3.exceptions.MemberNotFoundException;
-import edu.aitu.oop3.repositories.BookRepository;
-import edu.aitu.oop3.repositories.LoanRepository;
-import edu.aitu.oop3.repositories.MemberRepository;
-import edu.aitu.oop3.service.LoanService;
-import edu.aitu.oop3.service.FineCalculator;
+ package library.controller;
+import library.entities.Book;
+import library.entities.Member;
+import library.exceptions.BookAlreadyOnLoanException;
+import library.exceptions.MemberNotFoundException;
+import library.repositories.BookRepository;
+import library.repositories.LoanRepository;
+import library.repositories.MemberRepository;
+import library.service.LoanService;
+import library.service.FineCalculator;
 
 import java.util.List;
 import java.util.Scanner;

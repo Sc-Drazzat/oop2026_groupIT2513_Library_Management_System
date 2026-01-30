@@ -1,4 +1,4 @@
-package edu.aitu.oop3.exceptions;
+package library.exceptions;
 
 public class LoanOverdueException extends RuntimeException {
     public LoanOverdueException(String message) {

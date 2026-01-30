@@ -1,4 +1,4 @@
-package edu.aitu.oop3.db;
+package library.db;
 
 import java.io.FileInputStream;
 import java.io.IOException;

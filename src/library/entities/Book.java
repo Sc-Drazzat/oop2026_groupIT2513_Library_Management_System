@@ -1,4 +1,4 @@
-package edu.aitu.oop3.entities;
+package library.entities;
 
 public class Book {
 

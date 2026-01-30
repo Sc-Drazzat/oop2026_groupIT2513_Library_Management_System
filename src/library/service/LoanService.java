@@ -1,13 +1,12 @@
-package edu.aitu.oop3.service;
-import edu.aitu.oop3.entities.Loan;
-import edu.aitu.oop3.entities.Book;
-import edu.aitu.oop3.entities.Member;
-import edu.aitu.oop3.exceptions.BookAlreadyOnLoanException;
-import edu.aitu.oop3.exceptions.LoanOverdueException;
-import edu.aitu.oop3.exceptions.MemberNotFoundException;
-import edu.aitu.oop3.repositories.LoanRepository;
-import edu.aitu.oop3.repositories.BookRepository;
-import edu.aitu.oop3.repositories.MemberRepository;
+package library.service;
+import library.entities.Loan;
+import library.entities.Book;
+import library.entities.Member;
+import library.exceptions.BookAlreadyOnLoanException;
+import library.exceptions.MemberNotFoundException;
+import library.repositories.LoanRepository;
+import library.repositories.BookRepository;
+import library.repositories.MemberRepository;
 import java.time.LocalDate;
 
 public class LoanService {

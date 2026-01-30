@@ -1,4 +1,4 @@
-package edu.aitu.oop3.service;
+package library.service;
 import java.time.LocalDate;
 
 public class FineCalculator {

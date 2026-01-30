@@ -1,4 +1,4 @@
-package edu.aitu.oop3.entities;
+package library.entities;
 import java.time.LocalDate;
 
 public class Loan {

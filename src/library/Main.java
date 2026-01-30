@@ -1,10 +1,10 @@
-package edu.aitu.oop3;
-import edu.aitu.oop3.repositories.BookRepository;
-import edu.aitu.oop3.repositories.LoanRepository;
-import edu.aitu.oop3.repositories.MemberRepository;
-import edu.aitu.oop3.service.LoanService;
-import edu.aitu.oop3.service.FineCalculator;
-import edu.aitu.oop3.controller.LibraryController;
+package library;
+import library.repositories.BookRepository;
+import library.repositories.LoanRepository;
+import library.repositories.MemberRepository;
+import library.service.LoanService;
+import library.service.FineCalculator;
+import library.controller.LibraryController;
 public class Main {
     public static void main(String[] args) {
         BookRepository bookRepository = new BookRepository();
