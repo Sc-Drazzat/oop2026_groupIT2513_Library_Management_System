@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.sql.*;
 
-public class MemberRepository  {
-    public Member findMemberById(int id) {
+public class MemberRepository  implements CrudRepository<Member, Integer> {
+    @Override
+    public Member findById(Integer id) {
         String query = "SELECT * FROM members WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -16,14 +17,13 @@ public class MemberRepository  {
                 return mapResultSetToMember(rs);
             }
             return null;
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    return null;
+        return null;
     }
-    public List<Member> listAllMembers() {
+
+    public List<Member> findAll() {
         List<Member> members = new ArrayList<>();
         String query = "SELECT * FROM members";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -34,10 +34,12 @@ public class MemberRepository  {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-    }
+        }
         return members;
     }
-    public void addMember(Member member) {
+
+    @Override
+    public Member save(Member member) {
         String query = "INSERT INTO members (name, email) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -47,8 +49,11 @@ public class MemberRepository  {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return member;
     }
-    public void updateMember(Member member) {
+
+    @Override
+    public Member update(Member member) {
         String query = "UPDATE members SET name = ?, email = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -59,9 +64,11 @@ public class MemberRepository  {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return member;
     }
 
-    public void deleteMember(int id) {
+    @Override
+    public void deleteById(Integer id) {
         String query = "DELETE FROM members WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -73,9 +80,9 @@ public class MemberRepository  {
     }
     private Member mapResultSetToMember(ResultSet rs) throws SQLException {
         return new Member(
-            rs.getInt("id"),
-            rs.getString("name"),
-            rs.getString("email")
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("email")
         );
     }
 }
