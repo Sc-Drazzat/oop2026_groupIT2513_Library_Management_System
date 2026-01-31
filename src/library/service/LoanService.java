@@ -3,6 +3,7 @@ import library.entities.Loan;
 import library.entities.Book;
 import library.entities.Member;
 import library.exceptions.BookAlreadyOnLoanException;
+import library.exceptions.LoanOverdueException;
 import library.exceptions.MemberNotFoundException;
 import library.repositories.LoanRepository;
 import library.repositories.BookRepository;
@@ -23,11 +24,11 @@ public class LoanService {
     }
 
     public void borrowBook(int memberId, int bookId) throws MemberNotFoundException, BookAlreadyOnLoanException {
-        Member member = memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findById(memberId);
         if (member == null) {
             throw new MemberNotFoundException("Member with ID " + memberId + " not found.");
         }
-        Book book = bookRepository.findBookById(bookId);
+        Book book = bookRepository.findById(bookId);
         if (book == null){
             throw new IllegalArgumentException("Book with ID " + bookId + " not found.");
         }
@@ -35,13 +36,13 @@ public class LoanService {
             throw new BookAlreadyOnLoanException("Book with ID " + bookId + " is already on loan.");
         }
         Loan loan = new Loan(0, bookId, memberId, LocalDate.now(), null, LocalDate.now().plusWeeks(2));
-        loanRepository.addLoan(loan);
+        loanRepository.save(loan);
 
         book.setAvailable(false);
-        bookRepository.updateBook(book);
+        bookRepository.update(book);
     }
-    public  void returnBook(int loanId) throws MemberNotFoundException, BookAlreadyOnLoanException {
-        Loan loan = loanRepository.findLoanById(loanId);
+    public  void returnBook(int loanId) throws MemberNotFoundException, BookAlreadyOnLoanException,LoanOverdueException {
+        Loan loan = loanRepository.findById(loanId);
         if (loan == null) {
             throw new IllegalArgumentException("No active loan found for book ID " + loanId + ".");
         }
@@ -49,11 +50,11 @@ public class LoanService {
         loan.setReturnDate(returnDate);
         double fine = fineCalculator.calculateFine(loan.getDueDate(), loan.getReturnDate());
         if (fine > 0) {
-            System.out.println("Loan is overdue. Fine amount: $" + fine);
+            throw new LoanOverdueException("Loan is overdue. Fine amount: $" + fine);
         }
-        loanRepository.updateLoan(loan);
-        Book book = bookRepository.findBookById(loanId);
+        loanRepository.update(loan);
+        Book book = bookRepository.findById(loanId);
         book.setAvailable(true);
-        bookRepository.updateBook(book);
+        bookRepository.update(book);
     }
 }
