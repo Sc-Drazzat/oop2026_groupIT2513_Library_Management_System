@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.sql.*;
 
-public class BookRepository {
-    public Book findBookById(int id) {
+public class BookRepository implements CrudRepository<Book, Integer> {
+    @Override
+    public Book findById(Integer id) {
         String query = "SELECT * FROM books WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -20,6 +21,21 @@ public class BookRepository {
             e.printStackTrace();
         }
         return null;
+    }
+    @Override
+    public  List<Book> findAll() {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                books.add(mapResultSetToBook(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
     }
 
     public List<Book> listAvailableBooks() {
@@ -37,7 +53,8 @@ public class BookRepository {
         return books;
     }
 
-    public void addBook(Book book) {
+    @Override
+    public Book save(Book book) {
         String query = "INSERT INTO books (title, author, available) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -48,9 +65,10 @@ public class BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return book;
     }
-
-    public void updateBook(Book book) {
+    @Override
+    public Book update(Book book) {
         String query = "UPDATE books SET title = ?, author = ?, available = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -62,9 +80,10 @@ public class BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return book;
     }
-
-    public void deleteBook(int id) {
+    @Override
+    public void deleteById(Integer id) {
         String query = "DELETE FROM books WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
