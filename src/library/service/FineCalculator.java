@@ -1,24 +1,14 @@
 package library.service;
-import java.time.LocalDate;
+import library.entities.Loan;
+import library.patterns.singleton.FinePolicy;
 
 public class FineCalculator {
-    private double finePerDay;
-
-    public  FineCalculator() {
-        this.finePerDay = 5.0;
-    }
-    public FineCalculator(double finePerDay) {
-        this.finePerDay = finePerDay;
-    }
-
-    public double calculateFine(LocalDate dueDate, LocalDate returnDate) {
-        if (returnDate == null || dueDate == null) {
-            return 0.0;
+    public double calculateFine(Loan loan) {
+        if (!loan.isOverdue()){
+            return 0;
         }
-        if (returnDate.isAfter(dueDate)) {
-            long daysOverdue = java.time.temporal.ChronoUnit.DAYS.between(dueDate, returnDate);
-            return daysOverdue * finePerDay;
-        }
-        return 0.0;
+        long overdueDays = loan.daysOverdue();
+        double fine = overdueDays*FinePolicy.getInstance().getFinePerDay();
+        return fine;
     }
 }
