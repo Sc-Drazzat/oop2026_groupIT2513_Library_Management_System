@@ -78,6 +78,7 @@ public class MemberRepository  implements CrudRepository<Member, Integer> {
             e.printStackTrace();
         }
     }
+
     private Member mapResultSetToMember(ResultSet rs) throws SQLException {
         return new Member(
                 rs.getInt("id"),
