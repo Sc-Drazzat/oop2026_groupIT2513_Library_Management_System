@@ -1,5 +1,6 @@
- package library.controller;
+package library.controller;
 import library.entities.Book;
+import library.entities.Loan;
 import library.entities.Member;
 import library.exceptions.BookAlreadyOnLoanException;
 import library.exceptions.MemberNotFoundException;
@@ -113,19 +114,23 @@ public class LibraryController {
         try {
             System.out.print("Enter Member ID: ");
             int memberId = Integer.parseInt(scanner.nextLine());
-            Member member = memberRepository.findMemberById(memberId);
+            Member member = memberRepository.findById(memberId);
             if (member == null) {
                 System.out.println("Member with ID " + memberId + " not found.");
                 return;
             }
-            List<String> loans = loanRepository.getLoansOfMember(memberId);
-            if (loans.isEmpty()) {
-                System.out.println("No loans found for member ID " + memberId + ".");
-            }else  {
-                System.out.println("Loans for member " + member.getName() + ":");
-                for (String loan : loans) {
-                    System.out.println(loan);
+            List<Loan> allLoans = loanRepository.findAll();
+            boolean hasLoans = false;
+            for (Loan loan : allLoans) {
+                if (loan.getMemberId() == memberId) {
+                    System.out.println("Loan ID: " + loan.getId() + ", Book ID: " + loan.getBookId() +
+                            ", Loan Date: " + loan.getLoanDate() + ", Due Date: " + loan.getDueDate() +
+                            ", Return Date: " + (loan.getReturnDate() != null ? loan.getReturnDate() : "Not returned"));
+                    hasLoans = true;
                 }
+            }
+            if (!hasLoans) {
+                System.out.println("No loans found for member ID " + memberId + ".");
             }
         }catch (Exception e) {
             System.out.println("Error retrieving member loans: " + e.getMessage());}
