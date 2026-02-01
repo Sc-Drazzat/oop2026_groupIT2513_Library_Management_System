@@ -9,6 +9,9 @@ import library.repositories.LoanRepository;
 import library.repositories.MemberRepository;
 import library.service.LoanService;
 import library.service.FineCalculator;
+import library.factory.BookFactory;
+import library.reports.LoanReport;
+import library.reports.MemberSummary;
 
 import java.util.List;
 import java.util.Scanner;
@@ -29,8 +32,9 @@ public class LibraryController {
         FineCalculator fineCalculator = new FineCalculator();
         this.loanService = new LoanService(loanRepository, bookRepository, memberRepository, fineCalculator);
     }
-    public void run(){
-        while(true){
+
+    public void run() {
+        while (true) {
             System.out.print("\nLibrary Menu\n");
             System.out.println("1. List available books");
             System.out.println("2. Borrow a book");
@@ -57,9 +61,15 @@ public class LibraryController {
                     returnBook();
                     break;
                 case 4:
-                    viewMemberLoans();
+                    viewMemberSummary();
                     break;
                 case 5:
+                    viewLoanReport();
+                    break;
+                case 6:
+                    createBook();
+                    break;
+                case 7:
                     System.out.println("Exiting the system. Goodbye!");
                     return;
                 default:
@@ -84,7 +94,8 @@ public class LibraryController {
             System.out.println("Error retrieving available books: " + e.getMessage());
         }
     }
-    private  void borrowBook() {
+
+    private void borrowBook() {
         try {
             System.out.print("Enter Member ID: ");
             int memberId = Integer.parseInt(scanner.nextLine());
@@ -100,6 +111,7 @@ public class LibraryController {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
+
     private void returnBook() {
         try {
             System.out.println("Enter Loan ID to return: ");
@@ -110,29 +122,81 @@ public class LibraryController {
             System.out.println("Error returning book: " + e.getMessage());
         }
     }
-    private void viewMemberLoans()  {
+
+    private void viewMemberSummary() {
         try {
             System.out.print("Enter Member ID: ");
             int memberId = Integer.parseInt(scanner.nextLine());
-            Member member = memberRepository.findById(memberId);
-            if (member == null) {
-                System.out.println("Member with ID " + memberId + " not found.");
-                return;
+            MemberSummary summary = loanService.generateMemberSummary(memberId);
+            System.out.println("Member Summary for ID " + memberId + ":");
+            System.out.println("Name: " + summary.getMemberName());
+            System.out.println("Active Loans: " + summary.getActiveLoans());
+            System.out.println("Total Fines: $" + summary.getTotalFines());
+        } catch (MemberNotFoundException e) {
+            System.out.println("Error retrieving member summary: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric Member ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private void viewLoanReport() {
+        try {
+            System.out.print("Enter Loan ID: ");
+            int loanId = Integer.parseInt(scanner.nextLine());
+            System.out.println("Loan Report for Loan ID " + loanId + ":");
+            LoanReport report = loanService.generateLoanReport(loanId);
+            System.out.println(report);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric Loan ID.");
+        }
+        catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private void createBook() {
+        try {
+            System.out.println("Choose Book Type (1. Printed, 2. EBook, 3. Reference): ");
+            int typeChoice = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter Title: ");
+            String title = scanner.nextLine();
+            System.out.print("Enter Author: ");
+            String author = scanner.nextLine();
+            System.out.print("Enter Year: ");
+            int year = Integer.parseInt(scanner.nextLine());
+            Book book = null;
+            switch (typeChoice) {
+                case 1:
+                    System.out.print("Enter Number of Pages: ");
+                    int pages = Integer.parseInt(scanner.nextLine());
+                    book = BookFactory.createBook(0, title, author, true, "printed", pages, null, null);
+                    bookRepository.save(book);
+                    System.out.println("Printed Book created successfully.");
+                    break;
+                case 2:
+                    System.out.print("Enter File Format: ");
+                    String fileFormat = scanner.nextLine();
+                    book = BookFactory.createBook(0, title, author, true, "ebook", 0, fileFormat, null);
+                    bookRepository.save(book);
+                    System.out.println("EBook created successfully.");
+                    break;
+                case 3:
+                    System.out.print("Enter File Format: ");
+                    String subjectArea = scanner.nextLine();
+                    book = BookFactory.createBook(0, title, author, true, "reference", 0, null, subjectArea);
+                    bookRepository.save(book);
+                    System.out.println("Reference Book created successfully.");
+                    break;
+                default:
+                    System.out.println("Invalid book type choice.");
+                    break;
             }
-            List<Loan> allLoans = loanRepository.findAll();
-            boolean hasLoans = false;
-            for (Loan loan : allLoans) {
-                if (loan.getMemberId() == memberId) {
-                    System.out.println("Loan ID: " + loan.getId() + ", Book ID: " + loan.getBookId() +
-                            ", Loan Date: " + loan.getLoanDate() + ", Due Date: " + loan.getDueDate() +
-                            ", Return Date: " + (loan.getReturnDate() != null ? loan.getReturnDate() : "Not returned"));
-                    hasLoans = true;
-                }
-            }
-            if (!hasLoans) {
-                System.out.println("No loans found for member ID " + memberId + ".");
-            }
-        }catch (Exception e) {
-            System.out.println("Error retrieving member loans: " + e.getMessage());}
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter numeric values where required.");
+        } catch (Exception e) {
+            System.out.println("Error creating book: " + e.getMessage());
+        }
     }
 }

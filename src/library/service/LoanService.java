@@ -5,11 +5,15 @@ import library.entities.Member;
 import library.exceptions.BookAlreadyOnLoanException;
 import library.exceptions.LoanOverdueException;
 import library.exceptions.MemberNotFoundException;
+import library.reports.MemberSummary;
+import  library.reports.LoanReport;
 import library.repositories.LoanRepository;
 import library.repositories.BookRepository;
 import library.repositories.MemberRepository;
 import library.config.LibraryConfig;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoanService {
     private final LoanRepository loanRepository;
@@ -42,7 +46,7 @@ public class LoanService {
         }
 
         Book book = bookRepository.findById(bookId);
-        if (book == null){
+        if (book == null) {
             throw new IllegalArgumentException("Book with ID " + bookId + " not found.");
         }
         if (!book.isAvailable()) {
@@ -54,7 +58,8 @@ public class LoanService {
         book.setAvailable(false);
         bookRepository.update(book);
     }
-    public  void returnBook(int loanId) throws MemberNotFoundException, BookAlreadyOnLoanException,LoanOverdueException {
+
+    public void returnBook(int loanId) throws MemberNotFoundException, BookAlreadyOnLoanException, LoanOverdueException {
         Loan loan = loanRepository.findById(loanId);
         if (loan == null) {
             throw new IllegalArgumentException("No active loan found for book ID " + loanId + ".");
@@ -69,5 +74,50 @@ public class LoanService {
         Book book = bookRepository.findById(loanId);
         book.setAvailable(true);
         bookRepository.update(book);
+    }
+
+    public LoanReport generateLoanReport(int loanId) {
+        Loan loan = loanRepository.findById(loanId);
+        if (loan == null) {
+            throw new IllegalArgumentException("No loan found with ID " + loanId + ".");
+        }
+        Member member = memberRepository.findById(loan.getMemberId());
+        if (member == null) {
+            throw new MemberNotFoundException("Member not found for loan ID " + loanId + ".");
+        }
+        return new LoanReport.Builder()
+                .setLoanId(loan.getId())
+                .setMemberId(member.getId())
+                .setBookId(loan.getBookId())
+                .setLoanDate(loan.getLoanDate())
+                .setDueDate(loan.getDueDate())
+                .setReturnDate(loan.getReturnDate())
+                .build();
+    }
+
+    public MemberSummary generateMemberSummary(int memberId) {
+        Member member = memberRepository.findById(memberId);
+        if (member == null) {
+            throw new MemberNotFoundException("Member not found");
+        }
+        List<Loan> loans = loanRepository.findAll();
+        List<String> borrowedBookTitles = new ArrayList<>();
+        int activeLoans = 0;
+        int totalLoans = 0;
+        double totalFines = 0;
+        for (Loan loan : loans) {
+            if (loan.getMemberId() == memberId) {
+                totalLoans++;
+                if (loan.getReturnDate() == null) activeLoans++;
+                totalFines += fineCalculator.calculateFine(loan);
+            }
+        }
+        return new MemberSummary.Builder()
+                .setMemberId(member.getId())
+                .setMemberName(member.getName())
+                .setTotalLoans(totalLoans)
+                .setActiveLoans(activeLoans)
+                .setTotalFines(totalFines)
+                .build();
     }
 }

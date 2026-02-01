@@ -1,7 +1,7 @@
 package library.entities;
 
 public class PrintedBook extends Book {
-    private int numberOfPages;
+    private int pages;
 
     public PrintedBook() {}
 
@@ -10,11 +10,11 @@ public class PrintedBook extends Book {
         setNumberOfPages(pages);
     }
 
-    public int getNumberOfPages() {
-        return numberOfPages;
+    public int getPages() {
+        return pages;
     }
 
-    public void setNumberOfPages(int numberOfPages) {
-        this.numberOfPages = numberOfPages;
+    public void setNumberOfPages(int pages) {
+        this.pages = pages;
     }
 }
