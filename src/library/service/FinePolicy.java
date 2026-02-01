@@ -1,4 +1,4 @@
-package library.patterns.singleton;
+package library.service;
 
 
 public class FinePolicy {

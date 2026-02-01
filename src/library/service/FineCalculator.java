@@ -1,6 +1,5 @@
 package library.service;
 import library.entities.Loan;
-import library.patterns.singleton.FinePolicy;
 
 public class FineCalculator {
     public double calculateFine(Loan loan) {
