@@ -8,6 +8,7 @@ import library.exceptions.MemberNotFoundException;
 import library.repositories.LoanRepository;
 import library.repositories.BookRepository;
 import library.repositories.MemberRepository;
+import library.config.LibraryConfig;
 import java.time.LocalDate;
 
 public class LoanService {
@@ -28,6 +29,18 @@ public class LoanService {
         if (member == null) {
             throw new MemberNotFoundException("Member with ID " + memberId + " not found.");
         }
+        LibraryConfig config = LibraryConfig.getInstance();
+        int activeLoans = 0;
+        for (Loan loan : loanRepository.findAll()) {
+            if (loan.getMemberId() == memberId && loan.getReturnDate() == null) {
+                activeLoans++;
+            }
+        }
+
+        if (activeLoans >= config.getMaxBooksPerMember()) {
+            throw new IllegalStateException("Max Books per Member: " + config.getMaxBooksPerMember());
+        }
+
         Book book = bookRepository.findById(bookId);
         if (book == null){
             throw new IllegalArgumentException("Book with ID " + bookId + " not found.");
@@ -35,7 +48,7 @@ public class LoanService {
         if (!book.isAvailable()) {
             throw new BookAlreadyOnLoanException("Book with ID " + bookId + " is already on loan.");
         }
-        Loan loan = new Loan(0, bookId, memberId, LocalDate.now(), null, LocalDate.now().plusWeeks(2));
+        Loan loan = new Loan(0, bookId, memberId, LocalDate.now(), null, LocalDate.now().plusDays(config.getLoanPeriodDays()));
         loanRepository.save(loan);
 
         book.setAvailable(false);
@@ -48,7 +61,7 @@ public class LoanService {
         }
         LocalDate returnDate = LocalDate.now();
         loan.setReturnDate(returnDate);
-        double fine = fineCalculator.calculateFine(loan.getDueDate(), loan.getReturnDate());
+        double fine = fineCalculator.calculateFine(loan);
         if (fine > 0) {
             throw new LoanOverdueException("Loan is overdue. Fine amount: $" + fine);
         }
