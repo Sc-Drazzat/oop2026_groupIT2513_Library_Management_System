@@ -1,11 +1,11 @@
 package library.entities;
 
-public class Book {
+public abstract class Book {
 
-    private int id;
-    private String title;
-    private String author;
-    private boolean available;
+    protected  int id;
+    protected String title;
+    protected String author;
+    protected boolean available;
 
     public Book() {}
 
@@ -15,6 +15,7 @@ public class Book {
         setAuthor(author);
         setAvailable(available);
     }
+    public abstract String getBookType();
 
     public int getId() {
         return id;
