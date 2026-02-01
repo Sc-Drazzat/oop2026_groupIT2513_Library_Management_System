@@ -68,4 +68,17 @@ public class Loan {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
+
+    public boolean isOverdue() {
+        LocalDate currentReturnDate = (returnDate != null) ? returnDate : LocalDate.now();
+        return currentReturnDate.isAfter(dueDate);
+    }
+
+    public long daysOverdue() {
+        if (!isOverdue()) {
+            return 0;
+        }
+        LocalDate currentReturnDate = (returnDate != null) ? returnDate : LocalDate.now();
+        return java.time.temporal.ChronoUnit.DAYS.between(dueDate, currentReturnDate);
+    }
 }
