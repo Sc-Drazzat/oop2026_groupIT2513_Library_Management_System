@@ -1,0 +1,7 @@
+package librarysys.exceptions;
+
+public class LoanOverdueException extends RuntimeException {
+    public LoanOverdueException(String message) {
+        super(message);
+    }
+}
