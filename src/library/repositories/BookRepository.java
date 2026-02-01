@@ -99,7 +99,7 @@ public class BookRepository implements CrudRepository<Book, Integer> {
                 rs.getBoolean("available"),
                 rs.getString("type"),
                 rs.getInt("pages"),
-                rs.getString("file_format"),
+                rs.getString("format"),
                 rs.getString("subject_area")
         );
     }

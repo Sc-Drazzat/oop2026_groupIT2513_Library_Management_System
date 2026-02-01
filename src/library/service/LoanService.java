@@ -75,6 +75,13 @@ public class LoanService {
         book.setAvailable(true);
         bookRepository.update(book);
     }
+    public void listOverdueLoans() {
+        loanRepository.findAll().stream()
+                .filter(Loan::isOverdue)
+                .forEach(loan ->
+                        System.out.println("Loan ID " + loan.getId() + " is overdue")
+                );
+    }
 
     public LoanReport generateLoanReport(int loanId) {
         Loan loan = loanRepository.findById(loanId);

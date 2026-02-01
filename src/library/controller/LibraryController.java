@@ -14,6 +14,7 @@ import library.reports.LoanReport;
 import library.reports.MemberSummary;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class LibraryController {
@@ -22,6 +23,7 @@ public class LibraryController {
     private LoanRepository loanRepository;
     private LoanService loanService;
     private Scanner scanner;
+    private final Map<Integer, Runnable> menuActions;
 
     public LibraryController(BookRepository bookRepository, MemberRepository memberRepository, LoanRepository loanRepository, LoanService loanService) {
         this.bookRepository = bookRepository;
@@ -31,50 +33,49 @@ public class LibraryController {
         this.scanner = new Scanner(System.in);
         FineCalculator fineCalculator = new FineCalculator();
         this.loanService = new LoanService(loanRepository, bookRepository, memberRepository, fineCalculator);
+
+        this.menuActions = Map.of(
+                1, this::listAvailableBooks,
+                2, this::borrowBook,
+                3, this::returnBook,
+                4, this::viewMemberSummary,
+                5, this::viewLoanReport,
+                6, this::createBook,
+                7, this::listOverdueLoans
+        );
     }
 
     public void run() {
         while (true) {
-            System.out.print("\nLibrary Menu\n");
-            System.out.println("1. List available books");
-            System.out.println("2. Borrow a book");
-            System.out.println("3. Return a book");
-            System.out.println("4. View member loans");
-            System.out.println("5. Exit");
+            System.out.println("\nLibrary Management System");
+            System.out.println("1. List Available Books");
+            System.out.println("2. Borrow Book");
+            System.out.println("3. Return Book");
+            System.out.println("4. View Member Summary");
+            System.out.println("5. View Loan Report");
+            System.out.println("6. Create Book");
+            System.out.println("7. List Overdue Loans");
+            System.out.println("8. Exit");
             System.out.print("Choose an option: ");
 
             int choice;
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("Invalid input. Please enter a number between 1 and 8.");
                 continue;
             }
-            switch (choice) {
-                case 1:
-                    listAvailableBooks();
-                    break;
-                case 2:
-                    borrowBook();
-                    break;
-                case 3:
-                    returnBook();
-                    break;
-                case 4:
-                    viewMemberSummary();
-                    break;
-                case 5:
-                    viewLoanReport();
-                    break;
-                case 6:
-                    createBook();
-                    break;
-                case 7:
-                    System.out.println("Exiting the system. Goodbye!");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
+
+            if (choice == 8) {
+                System.out.println("Exiting the system. Goodbye!");
+                break;
+            }
+
+            Runnable action = menuActions.get(choice);
+            if (action != null) {
+                action.run();
+            } else {
+                System.out.println("Invalid choice. Please try again.");
             }
         }
     }
@@ -87,9 +88,11 @@ public class LibraryController {
                 System.out.println("No available books at the moment.");
                 return;
             }
-            for (Book book : books) {
-                System.out.println(book.getId() + ": " + book.getTitle());
-            }
+            books.stream()
+                    .sorted((b1, b2) -> b1.getTitle().compareToIgnoreCase(b2.getTitle()))
+                    .forEach(book ->
+                            System.out.println(book.getId() + ": " + book.getTitle())
+                    );
         } catch (Exception e) {
             System.out.println("Error retrieving available books: " + e.getMessage());
         }
@@ -145,7 +148,6 @@ public class LibraryController {
         try {
             System.out.print("Enter Loan ID: ");
             int loanId = Integer.parseInt(scanner.nextLine());
-            System.out.println("Loan Report for Loan ID " + loanId + ":");
             LoanReport report = loanService.generateLoanReport(loanId);
             System.out.println(report);
         } catch (NumberFormatException e) {
@@ -197,6 +199,14 @@ public class LibraryController {
             System.out.println("Invalid input. Please enter numeric values where required.");
         } catch (Exception e) {
             System.out.println("Error creating book: " + e.getMessage());
+        }
+    }
+
+    private void listOverdueLoans() {
+        try {
+            loanService.listOverdueLoans();
+        } catch (Exception e) {
+            System.out.println("Error listing overdue loans: " + e.getMessage());
         }
     }
 }
