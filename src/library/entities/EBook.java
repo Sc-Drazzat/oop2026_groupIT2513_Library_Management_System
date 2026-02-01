@@ -2,13 +2,10 @@ package library.entities;
 
 public class EBook extends Book {
     private String fileFormat;
-    private double fileSizeMB;
 
-    public EBook() {}
-
-    public EBook(String fileFormat, double fileSizeMB) {
+    public EBook(int id, String title, String author, boolean available, String fileFormat) {
+        super(id, title, author, available, "ebook");
         this.fileFormat = fileFormat;
-        this.fileSizeMB = fileSizeMB;
     }
 
     public String getFileFormat() {
@@ -19,16 +16,5 @@ public class EBook extends Book {
         this.fileFormat = fileFormat;
     }
 
-    public double getFileSizeMB() {
-        return fileSizeMB;
-    }
 
-    public void setFileSizeMB(double fileSizeMB) {
-        this.fileSizeMB = fileSizeMB;
-    }
-
-    @Override
-    public String getBookType() {
-        return "E-Book";
-    }
 }

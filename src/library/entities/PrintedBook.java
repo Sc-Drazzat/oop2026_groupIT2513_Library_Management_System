@@ -5,9 +5,9 @@ public class PrintedBook extends Book {
 
     public PrintedBook() {}
 
-    public PrintedBook(int id, String title, String author, boolean available, int numberOfPages) {
-        super(id, title, author, available);
-        setNumberOfPages(numberOfPages);
+    public PrintedBook(int id, String title, String author, boolean available, int pages) {
+        super(id, title, author, available, "printed");
+        setNumberOfPages(pages);
     }
 
     public int getNumberOfPages() {
@@ -16,9 +16,5 @@ public class PrintedBook extends Book {
 
     public void setNumberOfPages(int numberOfPages) {
         this.numberOfPages = numberOfPages;
-    }
-    @Override
-    public String getBookType() {
-        return "Printed";
     }
 }

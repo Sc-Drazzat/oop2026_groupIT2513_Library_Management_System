@@ -1,6 +1,8 @@
 package library.repositories;
 import library.entities.Book;
 import library.db.DatabaseConnection;
+import library.factory.BookFactory;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.*;
@@ -94,11 +96,15 @@ public class BookRepository implements CrudRepository<Book, Integer> {
         }
     }
     private Book mapResultSetToBook(ResultSet rs) throws SQLException {
-        return new Book(
+        return BookFactory.createBook(
                 rs.getInt("id"),
                 rs.getString("title"),
                 rs.getString("author"),
-                rs.getBoolean("available")
+                rs.getBoolean("available"),
+                rs.getString("type"),
+                rs.getInt("pages"),
+                rs.getString("file_format"),
+                rs.getString("subject_area")
         );
     }
 }

@@ -6,17 +6,17 @@ public abstract class Book {
     protected String title;
     protected String author;
     protected boolean available;
+    protected String type;
 
     public Book() {}
 
-    public Book(int id, String title, String author, boolean available) {
+    public Book(int id, String title, String author, boolean available, String type) {
         setId(id);
         setTitle(title);
         setAuthor(author);
         setAvailable(available);
+        setType(type);
     }
-    public abstract String getBookType();
-
     public int getId() {
         return id;
     }
@@ -47,5 +47,12 @@ public abstract class Book {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public  String getType() {
+        return type;
+    }
+    public  void setType(String type) {
+        this.type = type;
     }
 }
